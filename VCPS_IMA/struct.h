@@ -4,21 +4,10 @@
 typedef struct
 {
 	double fitness[F_NUM];
-	double cub_len;
-	double error; 
+	double weightedValue; // 加权过后的目标值，即抗体亲和度
+	double error;			
 	int encode[TASK_NUM][AGENT_ALL];
 	
 }Individual;
-
-
-typedef struct 
-{
-	int maxrank;
-	int rankno[P_NUM];
-	Individual ind[P_NUM],
-		*ind_ptr;
-
-}Population;
-
 
 #endif

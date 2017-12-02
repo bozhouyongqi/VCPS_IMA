@@ -11,6 +11,8 @@ using namespace std;
 #include "init.h"
 #include "operateFun.h"
 
+Individual pop[P_NUM + MEM_NUM];
+
 void main() {
 
 }
