@@ -1,7 +1,7 @@
 #ifndef _INIT_H_
 #define _INIT_H_
 
-void initPop(Population *pop_ptr) {
+void initPop() {
 	int ind = 0;
 	int agentIndex = 0;
 	int taskIndex = 0;
@@ -12,7 +12,7 @@ void initPop(Population *pop_ptr) {
 		for (taskIndex = 0; taskIndex < TASK_NUM; taskIndex++) {
 			for (agentIndex = 0; agentIndex < AGENT_ALL; agentIndex++){
 				randNum = (double) rand()/RAND_MAX;
-				pop_ptr->ind[indIndex].encode[taskIndex][agentIndex] = randNum > 0.5 ? 1 : 0;
+				// pop_ptr->ind[indIndex].encode[taskIndex][agentIndex] = randNum > 0.5 ? 1 : 0;
 			}
 		}
 	}
@@ -51,10 +51,10 @@ void intAgentPara() {
 	}
 }
 
-void init(Population *pop_ptr) {
+void init() {
 	intAgentPara();
 	initNormalizationValue();
-	initPop(pop_ptr);
+	initPop();
 }
 
 #endif
