@@ -22,6 +22,57 @@ void generateVaccine(){
 
 void cross(){
 
+	int i,j,k,y,(*par1)[AGENT_ALL],(*par2)[AGENT_ALL];
+	double rnd;
+
+	int index_row=0;
+	int index_col=0;
+	int index_num=0;
+
+	int temp=0;
+	Individual *ind_ptr;
+
+	rnd=(double)rand()/RAND_MAX;  
+
+	ind_ptr=&(pop[0]); 
+
+	for (i = 0,y = 0;i < P_NUM/2;i++)
+	{
+		ind_ptr = &(pop[y]);
+		par1 = ind_ptr->encode;
+		y = y+1;
+
+		ind_ptr = &(pop[y]);
+		par2 = ind_ptr->encode; 
+		y = y+1;
+
+		rnd = (double)rand()/RAND_MAX;
+		if (rnd < Cross_pro)
+		{
+			index_row=rand()%(AGENT_ALL-1)+1;//产生1到AGENT_ALL-1之间的随机数，包含1而不包含AGENT_ALL-1
+			index_col=rand()%(TASK_NUM-1)+1;
+
+			for ( j=0;j<index_row;j++)
+				for ( k=0;k<index_col;k++)
+				{
+					temp=  *(*(par1+k)+j)   ;
+
+					*(*(par1+k)+j)=*(*(par2+k)+j);
+
+					*(*(par2+k)+j)=temp;
+				}
+
+				for (j=index_row;j<AGENT_ALL;j++)
+					for ( k=index_col;k<TASK_NUM;k++)
+					{
+						temp=  *(*(par1+k)+j)   ;
+
+						*(*(par1+k)+j)=*(*(par2+k)+j);
+
+						*(*(par2+k)+j)=temp;
+					} 
+		}
+	}
 }
 
 void mutate() {
