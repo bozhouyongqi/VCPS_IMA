@@ -12,7 +12,7 @@ void initPop() {
 		for (taskIndex = 0; taskIndex < TASK_NUM; taskIndex++) {
 			for (agentIndex = 0; agentIndex < AGENT_ALL; agentIndex++){
 				randNum = (double) rand()/RAND_MAX;
-				// pop_ptr->ind[indIndex].encode[taskIndex][agentIndex] = randNum > 0.5 ? 1 : 0;
+				pop[indIndex].encode[taskIndex][agentIndex] = randNum > 0.5 ? 1 : 0;
 			}
 		}
 	}

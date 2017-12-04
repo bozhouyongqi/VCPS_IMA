@@ -16,9 +16,12 @@ using namespace std;
 
 #include "global_var.h"
 #include "struct.h"
+
+Individual pop[P_NUM + MEM_NUM];
+
 #include "init.h"
 #include "operateFun.h"
-Individual pop[P_NUM + MEM_NUM];
+
 
 void main() {
 	
