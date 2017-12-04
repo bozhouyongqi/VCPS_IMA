@@ -76,7 +76,66 @@ void cross(){
 }
 
 void mutate() {
+	int index_agt1=0;
+	int index_agt2=0;
 
+	int index_tsk1=0;
+	int index_tsk2=0;
+
+	int temp=0;
+
+	Individual *ind_ptr;
+
+	double num_rnd=0;
+
+	int (*mut_ptr)[AGENT_ALL];
+
+	ind_ptr = &(pop[0]);
+
+	for (int k=0;k<P_NUM;k++)
+	{
+		ind_ptr=&(pop[k])	;
+		mut_ptr=ind_ptr->encode;
+
+		num_rnd=(double)rand()/RAND_MAX; ;
+
+		if (num_rnd < Mutate_pro)
+		{
+
+			index_agt1=rand()%AGENT_ALL;
+			index_agt2=rand()%AGENT_ALL;
+
+			index_tsk1=rand()%TASK_NUM;
+			index_tsk2=rand()%TASK_NUM;
+
+			if(index_agt1>index_agt2)
+			{
+				temp=index_agt1;
+				index_agt1=index_agt2;
+				index_agt2=temp;
+			}
+
+			if(index_tsk1>index_tsk2)
+			{
+				temp=index_tsk1;
+				index_tsk1=index_tsk2;
+				index_tsk2=temp;
+			}
+
+			int bit=0;
+
+			for (int i=index_tsk1;i<=index_tsk2;i++)
+				for (int j=index_agt1;j<=index_agt2;j++)
+				{
+					bit=*(*(mut_ptr+i)+j);
+					if (bit==0)
+						*(*(mut_ptr+i)+j)=1;
+
+					if (bit==1)
+						*(*(mut_ptr+i)+j)=0;
+				}	
+		}
+	}
 }	
 
 void inoculateAntibody() {
