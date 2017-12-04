@@ -40,10 +40,10 @@ void main() {
 			
 			for (gen = 0; gen < GEN_MAX; gen++) {
 				cross();
-				mutate();				// 得到种群P'
+				mutate();					// 得到种群P'
 				inoculateAntibody();		// 根据适应度比较接种前和接种后的抗体
 				updateCurrentRepo();		// 用记忆库与种群P'得到新种群P''，即按照fitness重新排序
-				generateMemoryRepo();	// 用种群P''更新记忆库新记忆库
+				generateMemoryRepo();		// 用种群P''更新记忆库新记忆库
 				generateVaccine();			// 产生疫苗
 			}
 		}

@@ -1,6 +1,6 @@
 #ifndef _OPERATE_FUN_H
 #define _OPERATE_FUN_H
-
+void calIndiviualFitness(int index);
 
 void generateMemoryRepo(){
 	// 根据适应度对前PUM个个体排序
@@ -14,10 +14,27 @@ void generateMemoryRepo(){
 			}
 		}
 	}
+	for (int i = P_NUM; i < P_NUM + MEM_NUM; i++) {
+		pop[i] = pop[i - P_NUM];
+	}
 }
 
 void generateVaccine(){
-
+	for (int taskNum = 0; taskNum < TASK_NUM; taskNum++) {
+		for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
+			int sum = 0;
+			for(int ind = P_NUM; ind < P_NUM + MEM_NUM; ind ++) {
+				sum += pop[ind].encode[taskNum][agentNum];
+			}
+			if (sum == MEM_NUM) {
+				Vaccine[taskNum][agentNum] = 1; // 
+			}else if (sum == 0){
+				Vaccine[taskNum][agentNum] = 0;
+			}else {
+				Vaccine[taskNum][agentNum] = -1;
+			}
+		}
+	}
 }
 
 void cross(){
@@ -139,7 +156,29 @@ void mutate() {
 }	
 
 void inoculateAntibody() {
+	Individual temp;
+	double rnd;
+	for (int i = 0; i < P_NUM; i++) {
+		calIndiviualFitness(i); // 逐个个体计算适应度
+	}
+	for (int ind = 0; ind < P_NUM; ind ++) {
+		rnd = (double)rand()/RAND_MAX;
+		if (rnd < Inoculate_pro) {
+			temp = pop[ind];
 
+			for (int taskNum = 0; taskNum < TASK_NUM; taskNum++) {
+				for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
+					if (Vaccine[taskNum][agentNum] >= 0) {
+						pop[ind].encode[taskNum][agentNum] = Vaccine[taskNum][agentNum];
+					}
+				}
+			}
+			calIndiviualFitness(ind);
+			if(pop[ind].weightedValue > temp.weightedValue) {
+				pop[ind] = temp;
+			}
+		}
+	}
 }
 
 void updateCurrentRepo() {
