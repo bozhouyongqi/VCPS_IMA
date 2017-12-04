@@ -24,7 +24,6 @@ Individual pop[P_NUM + MEM_NUM];
 
 
 void main() {
-	
 		srand((unsigned int)time(0));
 		clock_t start_time,finish_time;
 		double duration_time;

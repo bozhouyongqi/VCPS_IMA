@@ -3,7 +3,17 @@
 
 
 void generateMemoryRepo(){
-
+	// 根据适应度对前PUM个个体排序
+	Individual temp;
+	for(int i = 0; i < P_NUM -1 ; i++) {
+		for (int j = i + 1; j < P_NUM; j++) {
+			if(pop[i].weightedValue > pop[j].weightedValue) {
+				temp = pop[i];
+				pop[i] = pop[j];
+				pop[j] = temp;
+			}
+		}
+	}
 }
 
 void generateVaccine(){
@@ -23,7 +33,16 @@ void inoculateAntibody() {
 }
 
 void updateCurrentRepo() {
-
+	Individual temp;
+	for(int i = 0; i < P_NUM + MEM_NUM -1 ; i++) {
+		for (int j = i + 1; j < P_NUM + MEM_NUM; j++) {
+			if(pop[i].weightedValue > pop[j].weightedValue) {
+				temp = pop[i];
+				pop[i] = pop[j];
+				pop[j] = temp;
+			}
+		}
+	}
 }
 
 void calIndiviualFitness(int index) {
