@@ -82,5 +82,6 @@ FILE *Elite_Archive;						//¾«Ó¢µµ°¸
 
 FILE *last_gen_ptr;
 FILE *to_CompareMine;
+FILE *weightValueFile;
 
 #endif

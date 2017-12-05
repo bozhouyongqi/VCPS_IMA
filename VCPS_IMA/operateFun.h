@@ -231,7 +231,7 @@ void calIndiviualFitness(int index) {
 	for (int obj = 0; obj < F_NUM; obj++) {
 		pop[index].fitness[obj] = fitness[obj];
 		weightedValue += fitness[obj] * weightFactors[obj];
-	} 
+	}
 	pop[index].weightedValue = weightedValue + pop[index].error;
 }
 
