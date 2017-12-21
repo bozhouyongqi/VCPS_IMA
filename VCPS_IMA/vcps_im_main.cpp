@@ -23,6 +23,7 @@ Individual pop[P_NUM + MEM_NUM];
 #include "operateFun.h"
 
 void print_last_gen(int run_num,double cost_time);
+
 void main() {
 		srand((unsigned int)time(0));
 		clock_t start_time,finish_time;
@@ -33,30 +34,32 @@ void main() {
 
 		for (shiyan = 0; shiyan < Shiyan_NUM; shiyan++) {
 			start_time=clock();
-			init();
-			for (int i = 0; i < P_NUM; i++) {
-				calIndiviualFitness(i); // 逐个个体计算适应度
-			}
-			generateMemoryRepo();	// 生成记忆库
-			generateVaccine();		// 产生疫苗
-			
-			for (gen = 0; gen < GEN_MAX; gen++) {
-				cross();
-				mutate();					// 得到种群P'
-				inoculateAntibody();		// 根据适应度比较接种前和接种后的抗体
-				updateCurrentRepo();		// 用记忆库与种群P'得到新种群P''，即按照fitness重新排序
-				generateMemoryRepo();		// 用种群P''更新记忆库新记忆库
-				generateVaccine();			// 产生疫苗
-				if (gen == GEN_MAX -1) {
-					finish_time = clock();
-					duration_time = (double)(finish_time -start_time)/ CLOCKS_PER_SEC;
-					cout<<duration_time<<" s"<<endl;
-					print_last_gen(shiyan, duration_time);
-
-					ofz<<duration_time<<endl;
+			for (Task_index = 0; Task_index < TASK_NUM; Task_index++) {
+				init();							// 初始化初始种群
+				for (int i = 0; i < P_NUM; i++) {
+					calIndiviualFitness(i);		// 逐个个体计算适应度
 				}
-				if(0==gen%100)
-					cout<<"gen="<<gen<<endl	 ;
+				generateMemoryRepo();			// 生成记忆库
+				generateVaccine();				// 产生疫苗
+
+				for (gen = 0; gen < GEN_MAX; gen++) {
+					cross();
+					mutate();					// 得到种群P'
+					inoculateAntibody();		// 根据适应度比较接种前和接种后的抗体
+					updateCurrentRepo();		// 用记忆库与种群P'得到新种群P''，即按照fitness重新排序
+					generateMemoryRepo();		// 用种群P''更新记忆库新记忆库
+					generateVaccine();			// 产生疫苗
+					if (gen == GEN_MAX -1) {
+						finish_time = clock();
+						duration_time = (double)(finish_time -start_time)/ CLOCKS_PER_SEC;
+						cout<<duration_time<<" s"<<endl;
+						print_last_gen(shiyan, duration_time);
+
+						ofz<<duration_time<<endl;
+					}
+					if(0==gen%100)
+						cout<<"gen="<<gen<<endl	 ;
+				}
 			}
 		}
 		cout <<"test over"<<endl;

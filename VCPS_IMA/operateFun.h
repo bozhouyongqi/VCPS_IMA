@@ -20,39 +20,29 @@ void generateMemoryRepo(){
 }
 
 void generateVaccine(){
-	for (int taskNum = 0; taskNum < TASK_NUM; taskNum++) {
-		for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
-			int sum = 0;
-			for(int ind = P_NUM; ind < P_NUM + MEM_NUM; ind ++) {
-				sum += pop[ind].encode[taskNum][agentNum];
-			}
-			if (sum == MEM_NUM) {
-				Vaccine[taskNum][agentNum] = 1; // 
-			}else if (sum == 0){
-				Vaccine[taskNum][agentNum] = 0;
-			}else {
-				Vaccine[taskNum][agentNum] = -1;
-			}
+	for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
+		int sum = 0;
+		for(int ind = P_NUM; ind < P_NUM + MEM_NUM; ind ++) {
+			sum += pop[ind].encode[agentNum];
+		}
+		if (sum == MEM_NUM) {
+			Vaccine[agentNum] = 1; // 
+		}else if (sum == 0){
+			Vaccine[agentNum] = 0;
+		}else {
+			Vaccine[agentNum] = -1;
 		}
 	}
 }
 
 void cross(){
-
-	int i,j,k,y,(*par1)[AGENT_ALL],(*par2)[AGENT_ALL];
+	int i,y,*par1,*par2;
+	int agentStart = 0,agentEnd = 0;
 	double rnd;
-
-	int index_row=0;
-	int index_col=0;
-	int index_num=0;
-
 	int temp=0;
 	Individual *ind_ptr;
-
 	rnd=(double)rand()/RAND_MAX;  
-
 	ind_ptr=&(pop[0]); 
-
 	for (i = 0,y = 0;i < P_NUM/2;i++)
 	{
 		ind_ptr = &(pop[y]);
@@ -63,50 +53,27 @@ void cross(){
 		par2 = ind_ptr->encode; 
 		y = y+1;
 
-		rnd = (double)rand()/RAND_MAX;
-		if (rnd < Cross_pro)
-		{
-			index_row=rand()%(AGENT_ALL-1)+1;//产生1到AGENT_ALL-1之间的随机数，包含1而不包含AGENT_ALL-1
-			index_col=rand()%(TASK_NUM-1)+1;
-
-			for ( j=0;j<index_row;j++)
-				for ( k=0;k<index_col;k++)
-				{
-					temp=  *(*(par1+k)+j)   ;
-
-					*(*(par1+k)+j)=*(*(par2+k)+j);
-
-					*(*(par2+k)+j)=temp;
+		for (int process = 0; process < PROCESS_NUM; process++) {
+			int agentNum = agentNumInEveryProc[process];
+			agentStart = agentEnd;
+			agentEnd += agentNum;
+			rnd=(double)rand()/RAND_MAX;
+			if (rnd < Cross_pro) {
+				for (int agent = agentStart; agent < agentEnd; agent++) {
+					temp = *(par1 + agent);
+					*(par1 + agent) = *(par2 + agent);
+					*(par2 + agent) = *(par1 + agent);
 				}
-
-				for (j=index_row;j<AGENT_ALL;j++)
-					for ( k=index_col;k<TASK_NUM;k++)
-					{
-						temp=  *(*(par1+k)+j)   ;
-
-						*(*(par1+k)+j)=*(*(par2+k)+j);
-
-						*(*(par2+k)+j)=temp;
-					} 
+			}
 		}
 	}
 }
 
 void mutate() {
-	int index_agt1=0;
-	int index_agt2=0;
-
-	int index_tsk1=0;
-	int index_tsk2=0;
-
-	int temp=0;
-
 	Individual *ind_ptr;
-
-	double num_rnd=0;
-
-	int (*mut_ptr)[AGENT_ALL];
-
+	double rnd=0;
+	int *mut_ptr;
+	int agentStart = 0,agentEnd = 0;
 	ind_ptr = &(pop[0]);
 
 	for (int k=0;k<P_NUM;k++)
@@ -114,43 +81,16 @@ void mutate() {
 		ind_ptr=&(pop[k])	;
 		mut_ptr=ind_ptr->encode;
 
-		num_rnd=(double)rand()/RAND_MAX; ;
-
-		if (num_rnd < Mutate_pro)
-		{
-
-			index_agt1=rand()%AGENT_ALL;
-			index_agt2=rand()%AGENT_ALL;
-
-			index_tsk1=rand()%TASK_NUM;
-			index_tsk2=rand()%TASK_NUM;
-
-			if(index_agt1>index_agt2)
-			{
-				temp=index_agt1;
-				index_agt1=index_agt2;
-				index_agt2=temp;
+		for (int process = 0; process < PROCESS_NUM; process++) {
+			int agentNum = agentNumInEveryProc[process];
+			agentStart = agentEnd;
+			agentEnd += agentNum;
+			rnd=(double)rand()/RAND_MAX;
+			if (rnd < Mutate_pro) {
+				for (int agent = agentStart; agent < agentEnd; agent++) {
+					*(mut_ptr + agent) = 1 - *(mut_ptr + agent);
+				}
 			}
-
-			if(index_tsk1>index_tsk2)
-			{
-				temp=index_tsk1;
-				index_tsk1=index_tsk2;
-				index_tsk2=temp;
-			}
-
-			int bit=0;
-
-			for (int i=index_tsk1;i<=index_tsk2;i++)
-				for (int j=index_agt1;j<=index_agt2;j++)
-				{
-					bit=*(*(mut_ptr+i)+j);
-					if (bit==0)
-						*(*(mut_ptr+i)+j)=1;
-
-					if (bit==1)
-						*(*(mut_ptr+i)+j)=0;
-				}	
 		}
 	}
 }	
@@ -166,11 +106,9 @@ void inoculateAntibody() {
 		if (rnd < Inoculate_pro) {
 			temp = pop[ind];
 
-			for (int taskNum = 0; taskNum < TASK_NUM; taskNum++) {
-				for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
-					if (Vaccine[taskNum][agentNum] >= 0) {
-						pop[ind].encode[taskNum][agentNum] = Vaccine[taskNum][agentNum];
-					}
+			for (int agentNum = 0; agentNum < AGENT_ALL; agentNum++) {
+				if (Vaccine[agentNum] >= 0) {
+					pop[ind].encode[agentNum] = Vaccine[agentNum];
 				}
 			}
 			calIndiviualFitness(ind);
@@ -197,34 +135,32 @@ void updateCurrentRepo() {
 void calIndiviualFitness(int index) {
 	double fitness[F_NUM] = {0};
 	pop[index].error = 0;
-	for (int taskIndex = 0; taskIndex < TASK_NUM; taskIndex++) {
-		int agentStart = 0,agentEnd = 0;
-		for (int process = 0; process < PROCESS_NUM; process++) {
-			int agentNum = agentNumInEveryProc[process];
-			agentStart = agentEnd;
-			agentEnd += agentNum;
-			double maxTime = 0, quality = 0, cost = 0;
-			for (int agent = agentStart; agent < agentEnd; agent++) {
-				if (pop[index].encode[taskIndex][agent] == 1) {
-					if (agentPara[0][agent] > maxTime) {
-						maxTime = agentPara[0][agent];
-					}
-					quality += agentPara[1][agent];
-					cost += agentPara[2][agent];
-					fitness[1] += 1 - agentPara[1][agent] / normalizeValue[1];
-					fitness[2] += agentPara[2][agent] / normalizeValue[2];
+	int agentStart = 0,agentEnd = 0;
+	for (int process = 0; process < PROCESS_NUM; process++) {
+		int agentNum = agentNumInEveryProc[process];
+		agentStart = agentEnd;
+		agentEnd += agentNum;
+		double maxTime = 0, quality = 0, cost = 0;
+		for (int agent = agentStart; agent < agentEnd; agent++) {
+			if (pop[index].encode[agent] == 1) {
+				if (agentPara[0][agent] > maxTime) {
+					maxTime = agentPara[0][agent];
 				}
+				quality += agentPara[1][agent];
+				cost += agentPara[2][agent];
+				fitness[1] += 1 - agentPara[1][agent] / normalizeValue[1];
+				fitness[2] += agentPara[2][agent] / normalizeValue[2];
 			}
-			fitness[0] += maxTime / normalizeValue[0];
-			if (maxTime > constraint[taskIndex][process][0]){ // 判断是否满足限制条件
-				pop[index].error++;
-			}
-			if (quality < constraint[taskIndex][process][1]) {
-				pop[index].error++;
-			}
-			if (cost > constraint[taskIndex][process][2]) {
-				pop[index].error++;
-			}
+		}
+		fitness[0] += maxTime / normalizeValue[0];
+		if (maxTime > constraint[Task_index][process][0]){ // 判断是否满足限制条件
+			pop[index].error++;
+		}
+		if (quality < constraint[Task_index][process][1]) {
+			pop[index].error++;
+		}
+		if (cost > constraint[Task_index][process][2]) {
+			pop[index].error++;
 		}
 	}
 	double weightedValue = 0;

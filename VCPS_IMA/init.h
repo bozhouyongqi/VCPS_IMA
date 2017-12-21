@@ -9,11 +9,9 @@ void initPop() {
 	double randNum = 0;
 	int indIndex = 0;
 	for (indIndex = 0; indIndex < P_NUM; indIndex++) {
-		for (taskIndex = 0; taskIndex < TASK_NUM; taskIndex++) {
-			for (agentIndex = 0; agentIndex < AGENT_ALL; agentIndex++){
-				randNum = (double) rand()/RAND_MAX;
-				pop[indIndex].encode[taskIndex][agentIndex] = randNum > 0.5 ? 1 : 0;
-			}
+		for (agentIndex = 0; agentIndex < AGENT_ALL; agentIndex++){
+			randNum = (double) rand()/RAND_MAX;
+			pop[indIndex].encode[agentIndex] = randNum > 0.5 ? 1 : 0;
 		}
 	}
 }
