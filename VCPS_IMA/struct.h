@@ -10,5 +10,12 @@ typedef struct
 	
 }Individual;
 
+typedef struct {
+	double fitness[F_NUM];
+	double weightedValue;
+	double error;			
+	int encode[TASK_NUM][AGENT_ALL];
+}MergedIndividual;
+
 
 #endif

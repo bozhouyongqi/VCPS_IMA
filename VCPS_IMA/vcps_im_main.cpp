@@ -18,6 +18,8 @@ using namespace std;
 #include "struct.h"
 
 Individual pop[P_NUM + MEM_NUM];
+Individual serialArchives[TASK_NUM][MEM_NUM];
+MergedIndividual mergedArchives[MEM_NUM];
 
 #include "init.h"
 #include "operateFun.h"
@@ -31,7 +33,6 @@ void main() {
 		int shiyan = 0,gen = 0;
 		fstream ofz;
 		ofz.open("each_run_time_my.txt");
-
 		for (shiyan = 0; shiyan < Shiyan_NUM; shiyan++) {
 			start_time=clock();
 			for (Task_index = 0; Task_index < TASK_NUM; Task_index++) {
@@ -50,17 +51,17 @@ void main() {
 					generateMemoryRepo();		// 用种群P''更新记忆库新记忆库
 					generateVaccine();			// 产生疫苗
 					if (gen == GEN_MAX -1) {
-						finish_time = clock();
-						duration_time = (double)(finish_time -start_time)/ CLOCKS_PER_SEC;
-						cout<<duration_time<<" s"<<endl;
-						print_last_gen(shiyan, duration_time);
-
-						ofz<<duration_time<<endl;
+						saveSerialArchives();
 					}
-					if(0==gen%100)
-						cout<<"gen="<<gen<<endl	 ;
+					if (0 == gen % 100) {
+						cout << "gen = " << gen << endl;
+					}
 				}
 			}
+			mergeSerialArchives();
+			finish_time = clock();
+			duration_time = (double)(finish_time -start_time)/ CLOCKS_PER_SEC;
+			print_last_gen(shiyan, duration_time);
 		}
 		cout <<"test over"<<endl;
 }
@@ -91,24 +92,23 @@ void print_last_gen(int run_num,double cost_time)
 
 	int f=0,l=0,m=0,n=0;
 	int best_num=0;
-	Individual *ind_ptr;
-	for(f=P_NUM;f < P_NUM + MEM_NUM;f++)
+	MergedIndividual *ind_ptr;
+	for(f=0;f < MEM_NUM;f++)
 	{
-		ind_ptr=&(pop[f]);
+		ind_ptr=&(mergedArchives[f]);
 		if(ind_ptr->error < 1e-7) {
 			best_num++;
 			fprintf(last_gen_ptr, "%s", "individual: ");
 			fprintf(last_gen_ptr,"%d\n",f);
 			fprintf(last_gen_ptr,"%s","encode:\n");
-			for(l=0;l<TASK_NUM;l++)
-			{
+			for (l = 0; l < TASK_NUM; l++) {
 				for(m=0;m<AGENT_ALL;m++)
 				{
 					fprintf(last_gen_ptr,"%d",ind_ptr->encode[l][m]);
 					fprintf(last_gen_ptr,"%s","  ");
 				}
-				fprintf(last_gen_ptr,"%s","\n");
 			}
+			fprintf(last_gen_ptr,"%s","\n");
 			fprintf(last_gen_ptr,"%s","\n");
 
 			fprintf(last_gen_ptr,"%s","\n");

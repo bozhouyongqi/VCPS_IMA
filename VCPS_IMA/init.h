@@ -30,6 +30,9 @@ void initNormalizationValue() {
 
 void intAgentPara() {
 	for (int obj = 0; obj < F_NUM; obj++) {
+		for (int i = 0; i < AGENT_ALL; i++) {
+			agentPara[obj][i] = 0;
+		}
 		int index = 0;
 		for (int agent = 0; agent < AGENT1_NUM; agent++) {
 			agentPara[obj][index++] = agent1[obj][agent];

@@ -37,7 +37,6 @@ void generateVaccine(){
 
 void cross(){
 	int i,y,*par1,*par2;
-	int agentStart = 0,agentEnd = 0;
 	double rnd;
 	int temp=0;
 	Individual *ind_ptr;
@@ -52,7 +51,7 @@ void cross(){
 		ind_ptr = &(pop[y]);
 		par2 = ind_ptr->encode; 
 		y = y+1;
-
+		int agentStart = 0,agentEnd = 0;
 		for (int process = 0; process < PROCESS_NUM; process++) {
 			int agentNum = agentNumInEveryProc[process];
 			agentStart = agentEnd;
@@ -73,14 +72,14 @@ void mutate() {
 	Individual *ind_ptr;
 	double rnd=0;
 	int *mut_ptr;
-	int agentStart = 0,agentEnd = 0;
+	
 	ind_ptr = &(pop[0]);
 
 	for (int k=0;k<P_NUM;k++)
 	{
 		ind_ptr=&(pop[k])	;
 		mut_ptr=ind_ptr->encode;
-
+		int agentStart = 0,agentEnd = 0;
 		for (int process = 0; process < PROCESS_NUM; process++) {
 			int agentNum = agentNumInEveryProc[process];
 			agentStart = agentEnd;
@@ -169,6 +168,39 @@ void calIndiviualFitness(int index) {
 		weightedValue += fitness[obj] * weightFactors[obj];
 	}
 	pop[index].weightedValue = weightedValue + pop[index].error;
+}
+
+void saveSerialArchives() {
+	for (int i = P_NUM; i < P_NUM + MEM_NUM; i++) {
+		for (int j = 0; j < MEM_NUM; j++) {
+			serialArchives[Task_index][j] = pop[i];
+		}
+	}
+}
+
+/************************************************************************/
+/*合并serialArchives中的个体进mergedArchives
+/************************************************************************/
+void mergeSerialArchives() {
+	for (int i = 0; i < MEM_NUM; i++) {
+		double weightedFitnes = 0, errorSum = 0;
+		for (int j = 0; j < TASK_NUM; j++) {
+			for (int l = 0; l < AGENT_ALL; l++) {
+				mergedArchives[i].encode[j][l] = serialArchives[j][i].encode[l];
+			}
+			weightedFitnes += serialArchives[j][i].weightedValue;
+			errorSum += serialArchives[j][i].error;
+		}
+		mergedArchives[i].weightedValue = weightedFitnes;
+		mergedArchives[i].error = errorSum;
+		for (int j = 0; j < F_NUM; j++) {
+			double fitSum = 0;
+			for (int l = 0; l < TASK_NUM; l++) {
+				fitSum += serialArchives[l][i].fitness[j];
+			}
+			mergedArchives[i].fitness[j] = fitSum;
+		}
+	}
 }
 
 #endif
