@@ -147,11 +147,11 @@ void calIndiviualFitness(int index) {
 				}
 				quality += agentPara[1][agent];
 				cost += agentPara[2][agent];
-				fitness[1] += 1 - agentPara[1][agent] / normalizeValue[1];
-				fitness[2] += agentPara[2][agent] / normalizeValue[2];
+				fitness[1] += 1 - (double)agentPara[1][agent] / normalizeValue[1];
+				fitness[2] += (double)agentPara[2][agent] / normalizeValue[2];
 			}
 		}
-		fitness[0] += maxTime / normalizeValue[0];
+		fitness[0] += (double)maxTime / normalizeValue[0];
 		if (maxTime > constraint[Task_index][process][0]){ // 判断是否满足限制条件
 			pop[index].error++;
 		}
