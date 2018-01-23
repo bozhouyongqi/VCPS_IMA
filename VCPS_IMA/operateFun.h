@@ -135,6 +135,7 @@ void calIndiviualFitness(int index) {
 	double fitness[F_NUM] = {0};
 	pop[index].error = 0;
 	int agentStart = 0,agentEnd = 0;
+	double qualitySum = 0;
 	for (int process = 0; process < PROCESS_NUM; process++) {
 		int agentNum = agentNumInEveryProc[process];
 		agentStart = agentEnd;
@@ -149,6 +150,7 @@ void calIndiviualFitness(int index) {
 				cost += agentPara[2][agent];
 				fitness[1] += 1 - (double)agentPara[1][agent] / normalizeValue[1];
 				fitness[2] += (double)agentPara[2][agent] / normalizeValue[2];
+				qualitySum += (double)agentPara[1][agent] / normalizeValue[1];
 			}
 		}
 		fitness[0] += (double)maxTime / normalizeValue[0];
@@ -168,6 +170,7 @@ void calIndiviualFitness(int index) {
 		weightedValue += fitness[obj] * weightFactors[obj];
 	}
 	pop[index].weightedValue = weightedValue + pop[index].error;
+	pop[index].quality = qualitySum;
 }
 
 void saveSerialArchives() {
@@ -200,6 +203,11 @@ void mergeSerialArchives() {
 			}
 			mergedArchives[i].fitness[j] = fitSum;
 		}
+		double qualitySum = 0;
+		for (int j = 0; j < TASK_NUM; j++) {
+			qualitySum += serialArchives[j][i].quality;
+		}
+		mergedArchives[i].quality = qualitySum;
 	}
 }
 

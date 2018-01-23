@@ -1,8 +1,4 @@
-/************************************************************************/
-/* author: 王永奇
- * date  : 2017/11/30
- * title : 基于人工免疫算法的虚拟企业伙伴选择算法
-/************************************************************************/
+
 #include<iostream>
 #include<time.h>
 #include<math.h>
@@ -120,6 +116,9 @@ void print_last_gen(int run_num,double cost_time)
 			fprintf(last_gen_ptr,"%s","质量(1-q)=");
 			fprintf(last_gen_ptr,"%f,",ind_ptr->fitness[1]);
 
+			fprintf(last_gen_ptr,"%s","质量(q)=");
+			fprintf(last_gen_ptr,"%f,",ind_ptr->quality);
+
 			fprintf(last_gen_ptr,"%s","总花费成本=");
 			fprintf(last_gen_ptr,"%f,",ind_ptr->fitness[2]);
 
@@ -133,7 +132,11 @@ void print_last_gen(int run_num,double cost_time)
 
 			fprintf(last_gen_ptr,"%s","\n");
 			for(l=0;l<F_NUM;l++){
-				fprintf(to_CompareMine,"%f ",ind_ptr->fitness[l]);
+				if (l == 1) {
+					fprintf(to_CompareMine,"%f ",ind_ptr->quality);
+				}else {
+					fprintf(to_CompareMine,"%f ",ind_ptr->fitness[l]);
+				}
 			}
 			fprintf(to_CompareMine,"%s","\n");
 			fprintf(weightValueFile,"%f\n", ind_ptr->weightedValue);
