@@ -57,8 +57,10 @@ void main() {
 			mergeSerialArchives();
 			finish_time = clock();
 			duration_time = (double)(finish_time -start_time)/ CLOCKS_PER_SEC;
+			ofz<<duration_time<<endl;
 			print_last_gen(shiyan, duration_time);
 		}
+		ofz.close();
 		cout <<"test over"<<endl;
 }
 
